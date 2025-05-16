@@ -5,7 +5,7 @@
 
 ---
 
-**bcrypt-ultimate** is a modern and secure Java library for password hashing using the Bcrypt algorithm, with optional pre-KDF support via Argon2 or HKDF.
+**bcrypt-ultimate** is a modern and secure Java library for password hashing using the Bcrypt algorithm, with optional pre-processing using key derivation functions (KDFs) like Argon2 or HKDF.
 
 ---
 
@@ -27,16 +27,16 @@ Its main goals are:
 
 * ✅ Pure Java Bcrypt (no native bindings)
 * ✅ Secure EksBlowfish cipher with OpenBSD Base64
-* ✅ Optional KDF pre-processing (Argon2 or HKDF)
+* ✅ Optional key derivation function (KDF) pre-processing (e.g., Argon2id, HKDF)
 * ✅ Fluent & type-safe builder pattern
 * ✅ Thread-safe core (`@ThreadSafe`)
 * ✅ CLI for password hashing & verification
 * ✅ Security enhancements:
-  * Constant-time comparison
-  * SecureRandom salts
-  * Strict FIPS-safe mode
-  * Support for Bcrypt versions: `$2a$`, `$2b$`, `$2y$`  
-    > ✅ Internally, all versions behave like `$2b$`. Only the prefix changes for compatibility.
+* ✅ Constant-time comparison to prevent timing attacks
+	*	Cryptographically secure random salts
+  *	Strict FIPS-compliant mode
+	*	Support for Bcrypt versions: $2a$, $2b$, $2y$ (internally treated as $2b$ for compatibility)
+
 
 ---
 
