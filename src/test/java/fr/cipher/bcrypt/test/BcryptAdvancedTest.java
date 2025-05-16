@@ -3,7 +3,6 @@ package fr.cipher.bcrypt.test;
 import fr.cipher.bcrypt.core.BcryptConfig;
 import fr.cipher.bcrypt.core.BcryptEngine;
 import fr.cipher.bcrypt.kdf.Argon2KdfEngine;
-import fr.cipher.bcrypt.kdf.HkdfEngine;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import java.security.SecureRandom;
@@ -14,39 +13,15 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class BcryptAdvancedTest {
 
-    @Test
-    @DisplayName("Hashing with Argon2 KDF engine")
-    void testHashWithArgon2() {
-        var kdf = Argon2KdfEngine.builder()
-                .timeCost(2)
-                .memoryCost(65536)
-                .parallelism(2)
-                .hashLength(32)
-                .build();
-
-        BcryptConfig config = BcryptConfig.builder()
-                .setCostFactor(10)
-                .withKdf(kdf)
-                .build();
-
-        String hash = BcryptEngine.hash("secureKDF", config, new SecureRandom());
-        assertTrue(BcryptEngine.verify("secureKDF", hash, config));
-    }
-    
-    @Test
-    @DisplayName("Hashing with HKDF engine")
-    void testHashWithHkdf() {
-        var kdf = new HkdfEngine();
-
-        BcryptConfig config = BcryptConfig.builder()
-                .setCostFactor(10)
-                .withKdf(kdf)
-                .build();
-
-        String hash = BcryptEngine.hash("secureHKDF", config, new SecureRandom());
-        assertTrue(BcryptEngine.verify("secureHKDF", hash, config));
-    }
-
+	@Test
+	@DisplayName("Warn or handle passwords > 72 bytes (without KDF)")
+	void testPasswordExceeds72Bytes() {
+	    String longPassword = "a".repeat(100);
+	    BcryptConfig config = BcryptConfig.builder().setCostFactor(10).build();
+	    String hash = BcryptEngine.hash(longPassword, config, new SecureRandom());
+	    assertTrue(BcryptEngine.verify(longPassword, hash, config));
+	}
+	
     @Test
     @DisplayName("Strict FIPS mode requires a KDF")
     void testFipsModeRequiresKdf() {

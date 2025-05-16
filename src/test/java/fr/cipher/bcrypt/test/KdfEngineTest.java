@@ -1,7 +1,11 @@
 package fr.cipher.bcrypt.test;
 
+import fr.cipher.bcrypt.core.BcryptConfig;
+import fr.cipher.bcrypt.core.BcryptEngine;
 import fr.cipher.bcrypt.kdf.Argon2KdfEngine;
 import fr.cipher.bcrypt.kdf.HkdfEngine;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -18,6 +22,25 @@ class KdfEngineTest {
     private static final int HASH_LENGTH = 32;
 
     // -------------------- ARGON2 TESTS --------------------
+    
+    @Test
+    @DisplayName("Hashing with Argon2 KDF engine")
+    void testHashWithArgon2() {
+        var kdf = Argon2KdfEngine.builder()
+                .timeCost(2)
+                .memoryCost(65536)
+                .parallelism(2)
+                .hashLength(32)
+                .build();
+
+        BcryptConfig config = BcryptConfig.builder()
+                .setCostFactor(10)
+                .withKdf(kdf)
+                .build();
+
+        String hash = BcryptEngine.hash("secureKDF", config, new SecureRandom());
+        assertTrue(BcryptEngine.verify("secureKDF", hash, config));
+    }
     
     @Test
     void testDerive_returnsConsistentLength() {
@@ -95,6 +118,20 @@ class KdfEngineTest {
     
     // -------------------- HKDF TESTS --------------------
 
+    @Test
+    @DisplayName("Hashing with HKDF engine")
+    void testHashWithHkdf() {
+        var kdf = new HkdfEngine();
+
+        BcryptConfig config = BcryptConfig.builder()
+                .setCostFactor(10)
+                .withKdf(kdf)
+                .build();
+
+        String hash = BcryptEngine.hash("secureHKDF", config, new SecureRandom());
+        assertTrue(BcryptEngine.verify("secureHKDF", hash, config));
+    }
+    
     @Test
     void testHkdf_returnsCorrectLength() {
         HkdfEngine engine = new HkdfEngine();

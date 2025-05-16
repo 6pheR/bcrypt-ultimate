@@ -158,16 +158,6 @@ To avoid unexpected behavior, it's recommended to pre-process passwords using a 
 
 ---
 
-## 🛠️ TODO / Improvements
-
-- [ ] **Long password handling**: Add explicit validation or truncation notice for passwords longer than 72 bytes (Bcrypt ignores extra bytes).
-- [ ] **HKDF input validation**: Ensure `HkdfEngine.derive()` throws clear exceptions when salt is null or too short, and when length is non-positive.
-- [ ] **Edge case unit tests**:
-  - Test hashing with passwords longer than 72 bytes.
-  - Test HKDF derivation with null or short salt.
-
----
-
 ## 📄 License
 
 MIT © [6pheR](https://github.com/6pheR)

@@ -2,6 +2,7 @@ package fr.cipher.bcrypt.core;
 
 import fr.cipher.bcrypt.kdf.KdfEngine;
 
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
 /**
@@ -32,12 +33,14 @@ public final class BcryptEngine {
      * @return A bcrypt hash string.
      */
     public static String hash(String password, BcryptConfig config, SecureRandom random) {
-        if (config.isStrictFips()) {
-            if (config.getKdfEngine() == null) {
-                throw new IllegalStateException("Strict FIPS mode requires a FIPS-compliant KDF (e.g., Argon2, HKDF).");
-            }
+        if (config.isStrictFips() && config.getKdfEngine() == null) {
+            throw new IllegalStateException("Strict FIPS mode requires a FIPS-compliant KDF (e.g., Argon2, HKDF).");
         }
 
+        if (config.getKdfEngine() == null && password.getBytes(StandardCharsets.UTF_8).length > 72) {
+            System.err.println("Warning: Bcrypt ignores characters beyond 72 bytes.");
+        }
+        
         byte[] salt = new byte[16];
         random.nextBytes(salt);
 
