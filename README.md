@@ -11,7 +11,7 @@
 
 ## 🎯 Purpose
 
-This library provides an optional key derivation layer (KDF) on top of `bcrypt`, using algorithms like **Argon2id**, **HKDF**, to enhance password hashing security.
+This library optionally applies a KDF (like Argon2id or HKDF) before bcrypt, to increase the security of the password hashing process.
 
 Its main goals are:
 
