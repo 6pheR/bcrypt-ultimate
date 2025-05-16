@@ -75,10 +75,10 @@ String hash = BcryptEngine.hash("password", BcryptConfig.builder()
 BcryptConfig config = BcryptConfig.builder()
     .setCostFactor(12)
     .withKdf(Argon2KdfEngine.builder()
-        .iterations(3)
-        .memoryKb(65536)
+        .timeCost(3)
+        .memoryCost(65536)
         .parallelism(2)
-        .outputLength(32)
+        .hashLength(32)
         .build())
     .build();
 
