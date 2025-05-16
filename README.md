@@ -67,6 +67,16 @@ mvn clean install
 ### Hash
 
 ```bash
+ -c,--cost <arg>        Cost factor (default: 12)
+ -h,--hash              Hash a password
+ -H,--hashvalue <arg>   Hashed value to verify against
+ -k,--kdf               Use Argon2 key derivation
+ -p,--password <arg>    Password to hash or verify
+ -s,--strict            Enable strict FIPS mode
+ -v,--verify            Verify a password
+```
+
+```bash
 java -jar bcrypt-ultimate.jar --hash --password "myPassword123" --cost 12
 ```
 
