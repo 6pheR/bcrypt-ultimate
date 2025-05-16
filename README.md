@@ -32,11 +32,24 @@ Its main goals are:
 * ✅ Thread-safe core (`@ThreadSafe`)
 * ✅ CLI for password hashing & verification
 * ✅ Security enhancements:
-* ✅ Constant-time comparison to prevent timing attacks
-	*	Cryptographically secure random salts
-  *	Strict FIPS-compliant mode
-	*	Support for Bcrypt versions: $2a$, $2b$, $2y$ (internally treated as $2b$ for compatibility)
+  * Constant-time comparison to prevent timing attacks
+  * Cryptographically secure random salts
+  * Strict FIPS-compliant mode
+  * Support for Bcrypt versions: $2a$, $2b$, $2y$ (internally treated as $2b$ for compatibility)
 
+---
+
+## 🔐 Why KDF Before Bcrypt?
+
+Bcrypt has a known limitation: it only uses the first 72 bytes of a password. Any characters beyond that are ignored.
+
+By applying a KDF (e.g., Argon2id, HKDF) **before** passing the password to bcrypt, you:
+
+- Avoid bcrypt’s truncation behavior
+- Normalize passwords to a fixed, secure length
+- Add computational or memory-based protection (depending on the KDF)
+
+This approach offers better defense against brute-force and side-channel attacks.
 
 ---
 
