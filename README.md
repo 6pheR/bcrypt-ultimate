@@ -1,5 +1,10 @@
 # bcrypt-ultimate
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Java Version](https://img.shields.io/badge/Java-23%2B-blue)](https://www.oracle.com/java/technologies/javase-downloads.html)
+
+---
+
 **bcrypt-ultimate** is a modern and secure Java library for password hashing using the Bcrypt algorithm, with optional pre-KDF support via Argon2 or HKDF.
 
 ---
