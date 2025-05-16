@@ -101,4 +101,20 @@ public class BcryptAdvancedTest {
             BcryptEngine.hash(null, BcryptConfig.builder().build(), new SecureRandom())
         );
     }
+    
+    @Test
+    @DisplayName("Test historical 0x80 bug (should not be affected)")
+    void testBcryptZeroX80Bug() {
+        String basePassword = "PasswordTest";
+        String buggyPassword = basePassword + "\u0080";
+
+        BcryptConfig config = BcryptConfig.builder().setCostFactor(10).build();
+        SecureRandom random = new SecureRandom();
+
+        String hash = BcryptEngine.hash(basePassword, config, random);
+
+        assertFalse(BcryptEngine.verify(buggyPassword, hash, config),
+            "Bcrypt engine is vulnerable to the historical 0x80 bug!");
+    }
+
 }
