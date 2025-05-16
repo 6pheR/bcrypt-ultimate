@@ -16,6 +16,8 @@
   * Constant-time comparison
   * SecureRandom salts
   * Strict FIPS-safe mode
+  * Support for Bcrypt versions: `$2a$`, `$2b$`, `$2y$`  
+    > ✅ Internally, all versions behave like `$2b$`. Only the prefix changes for compatibility.
 
 ---
 
@@ -46,13 +48,13 @@ mvn clean install
 ### Hash
 
 ```bash
-java -jar target/bcrypt-ultimate-1.0.0-fat.jar   --hash --password "myPassword123" --cost 12
+java -jar target/bcrypt-ultimate-1.0.0-fat.jar --hash --password "myPassword123" --cost 12
 ```
 
 ### Verify
 
 ```bash
-java -jar target/bcrypt-ultimate-1.0.0-fat.jar   --verify --password "myPassword123"   --hashvalue "$2b$12$...."
+java -jar target/bcrypt-ultimate-1.0.0-fat.jar --verify --password "myPassword123" --hashvalue "$2b$12$...."
 ```
 
 ---
@@ -92,6 +94,15 @@ BcryptConfig config = BcryptConfig.builder()
     .build();
 ```
 
+### Custom Bcrypt Version
+
+```java
+BcryptConfig config = BcryptConfig.builder()
+    .setCostFactor(12)
+    .setVersion("2y")
+    .build();
+```
+
 ### Verify Password
 
 ```java
@@ -112,6 +123,7 @@ Test suites:
 - `KdfEngineTest` → Argon2 & HKDF
 - `BcryptAdvancedTest` → Timing consistency, edge cases
 - `BcryptCliTest` → CLI integration
+- `BcryptVersionTest` → Test versions `$2a$`, `$2b$`, `$2y$`
 
 All tests: ✔ Passed
 
@@ -150,7 +162,6 @@ To avoid unexpected behavior, it's recommended to pre-process passwords using a 
 
 - [ ] **Long password handling**: Add explicit validation or truncation notice for passwords longer than 72 bytes (Bcrypt ignores extra bytes).
 - [ ] **HKDF input validation**: Ensure `HkdfEngine.derive()` throws clear exceptions when salt is null or too short, and when length is non-positive.
-- [ ] **Bcrypt version selector**: Add support for selecting between `$2b$`, `$2a$`, or `$2y$` hashes for better interoperability.
 - [ ] **Edge case unit tests**:
   - Test hashing with passwords longer than 72 bytes.
   - Test HKDF derivation with null or short salt.

@@ -99,6 +99,7 @@
 						<include>fr.cipher.bcrypt.test.BcryptAdvancedTest</include>
 						<include>fr.cipher.bcrypt.test.BcryptCliTest</include>
 						<include>fr.cipher.bcrypt.test.BcryptTest</include>
+						<include>fr.cipher.bcrypt.test.BcryptVersionTest</include>
 					</includes>
 				</configuration>
 			</plugin>

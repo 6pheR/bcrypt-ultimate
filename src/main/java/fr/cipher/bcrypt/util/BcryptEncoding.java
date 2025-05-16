@@ -5,27 +5,27 @@ import java.util.regex.Pattern;
 
 /**
  * Utility class for Bcrypt-specific Base64 encoding and decoding.
- * <p>
- * Bcrypt uses a custom Base64 alphabet different from standard MIME Base64.
- * This class supports:
+ *
+ * Bcrypt uses a custom Base64 alphabet distinct from standard Base64:
+ * <pre>
+ * "./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+ * </pre>
+ * This class handles:
  * <ul>
- *     <li>Encoding/decoding using OpenBSD's Bcrypt alphabet</li>
- *     <li>Parsing and reconstructing standard Bcrypt hashes</li>
- *     <li>Extracting cost, salt, and hash parts from a Bcrypt string</li>
+ *   <li>Encoding/decoding in Bcrypt-compatible Base64</li>
+ *   <li>Parsing and extracting salt/cost/hash/version from Bcrypt hash strings</li>
+ *   <li>Constructing full Bcrypt hashes from components</li>
  * </ul>
- * <p>
- * Bcrypt Base64 alphabet: "./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
  */
 public class BcryptEncoding {
 
-    private static final Pattern BCRYPT_PATTERN = Pattern.compile("^\\$(2[abxy])\\$(\\d\\d)\\$(.{22})(.{31})$");
+    private static final Pattern BCRYPT_PATTERN = Pattern.compile("^\\$(2[aby])\\$(\\d\\d)\\$(.{22})(.{31})$");
     private static final char[] BCRYPT_BASE64 = "./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
     private static final int[] INDEX_64 = new int[128];
 
-	/**
-	 * Private constructor to prevent instantiation of this utility class. This
-	 * class is meant to provide static constants only.
-	 */
+    /**
+     * Prevent instantiation.
+     */
     private BcryptEncoding() {}
 
     static {
@@ -38,11 +38,11 @@ public class BcryptEncoding {
     }
 
     /**
-     * Encodes the given byte array using Bcrypt's custom Base64 format.
+     * Encodes bytes using Bcrypt-compatible Base64.
      *
-     * @param d      Input byte array.
-     * @param length Number of bytes to encode.
-     * @return Base64-encoded string using Bcrypt alphabet.
+     * @param d      byte array to encode
+     * @param length number of bytes to encode
+     * @return Base64-encoded string
      */
     public static String encodeBase64(byte[] d, int length) {
         StringBuilder encoded = new StringBuilder();
@@ -73,15 +73,16 @@ public class BcryptEncoding {
             encoded.append(BCRYPT_BASE64[c1 & 0x3f]);
             encoded.append(BCRYPT_BASE64[c3 & 0x3f]);
         }
+
         return encoded.toString();
     }
 
     /**
-     * Decodes a Bcrypt Base64-encoded string into a byte array.
+     * Decodes Bcrypt Base64-encoded string.
      *
-     * @param s         Base64-encoded input string.
-     * @param maxLength Maximum output length in bytes.
-     * @return Decoded byte array.
+     * @param s         Base64 string
+     * @param maxLength maximum output length
+     * @return decoded byte array
      */
     public static byte[] decodeBase64(String s, int maxLength) {
         int offset = 0, sLength = s.length(), outputLength = 0;
@@ -110,14 +111,12 @@ public class BcryptEncoding {
             output = ((c3 & 0x03) << 6) | c4;
             decoded[outputLength++] = (byte) (output & 0xff);
         }
+
         return decoded;
     }
 
     /**
-     * Returns the Base64 index of the given character.
-     *
-     * @param x Input character.
-     * @return Index in Bcrypt Base64 alphabet, or -1 if invalid.
+     * Maps Base64 character to integer index.
      */
     private static int char64(char x) {
         if (x < 0 || x > 127) return -1;
@@ -125,10 +124,10 @@ public class BcryptEncoding {
     }
 
     /**
-     * Extracts the 16-byte salt from a full bcrypt hash string.
+     * Extracts the salt portion from a Bcrypt hash.
      *
-     * @param bcryptHash A full bcrypt hash string.
-     * @return The decoded salt as bytes.
+     * @param bcryptHash full bcrypt hash
+     * @return 16-byte decoded salt
      */
     public static byte[] extractSalt(String bcryptHash) {
         Matcher m = BCRYPT_PATTERN.matcher(bcryptHash);
@@ -137,10 +136,7 @@ public class BcryptEncoding {
     }
 
     /**
-     * Extracts the cost factor from the bcrypt hash string.
-     *
-     * @param bcryptHash The bcrypt hash string.
-     * @return Cost factor as an integer.
+     * Extracts the cost factor (as integer) from a Bcrypt hash.
      */
     public static int extractCost(String bcryptHash) {
         Matcher m = BCRYPT_PATTERN.matcher(bcryptHash);
@@ -149,10 +145,7 @@ public class BcryptEncoding {
     }
 
     /**
-     * Extracts the raw hash (23 bytes) from a full bcrypt hash.
-     *
-     * @param bcryptHash Full bcrypt hash string.
-     * @return Decoded raw hash as a byte array.
+     * Extracts the 23-byte raw hash from a full Bcrypt string.
      */
     public static byte[] extractHash(String bcryptHash) {
         Matcher m = BCRYPT_PATTERN.matcher(bcryptHash);
@@ -161,36 +154,43 @@ public class BcryptEncoding {
     }
 
     /**
-     * Builds a bcrypt hash prefix using the salt and cost.
-     *
-     * @param salt  16-byte salt.
-     * @param cost  Cost factor.
-     * @return Encoded prefix including version, cost, and salt.
+     * Extracts the version prefix (e.g., "2b", "2y", "2a") from the Bcrypt hash.
      */
-    public static String encodeSalt(byte[] salt, int cost) {
+    public static String extractVersion(String bcryptHash) {
+        Matcher m = BCRYPT_PATTERN.matcher(bcryptHash);
+        if (!m.matches()) throw new IllegalArgumentException("Invalid bcrypt format");
+        return m.group(1);
+    }
+    
+    /**
+     * Builds a Bcrypt salt prefix with custom version.
+     *
+     * @param salt    16-byte salt
+     * @param cost    cost factor
+     * @param version bcrypt version string (e.g., "2b")
+     */
+    public static String encodeSalt(byte[] salt, int cost, String version) {
         if (salt.length != 16) throw new IllegalArgumentException("Salt must be 16 bytes");
-        return String.format("$2b$%02d$%s", cost, encodeBase64(salt, salt.length));
+        if (!version.matches("2[aby]")) throw new IllegalArgumentException("Unsupported Bcrypt version");
+        return String.format("$%s$%02d$%s", version, cost, encodeBase64(salt, salt.length));
     }
 
     /**
-     * Builds a complete bcrypt hash string from cost, salt, and raw hash.
+     * Builds a complete Bcrypt hash string with version control.
      *
-     * @param salt  16-byte salt.
-     * @param cost  Cost factor.
-     * @param hash  23-byte raw bcrypt hash.
-     * @return Full bcrypt hash string.
+     * @param salt    16-byte salt
+     * @param cost    cost factor
+     * @param hash    23-byte raw hash
+     * @param version bcrypt version ("2b", "2a", "2y")
      */
-    public static String encodeHash(byte[] salt, int cost, byte[] hash) {
-        String saltStr = encodeSalt(salt, cost);
+    public static String encodeHash(byte[] salt, int cost, byte[] hash, String version) {
+        String saltStr = encodeSalt(salt, cost, version);
         String hashStr = encodeBase64(hash, 23);
         return saltStr + hashStr;
     }
 
     /**
-     * Checks if a given string is a valid bcrypt hash.
-     *
-     * @param hash Hash string to validate.
-     * @return True if valid bcrypt format, false otherwise.
+     * Validates whether the given string matches Bcrypt hash format.
      */
     public static boolean isValidHash(String hash) {
         return BCRYPT_PATTERN.matcher(hash).matches();

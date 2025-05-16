@@ -4,12 +4,9 @@ import fr.cipher.bcrypt.core.BcryptConfig;
 import fr.cipher.bcrypt.core.BcryptEngine;
 import fr.cipher.bcrypt.kdf.Argon2KdfEngine;
 import fr.cipher.bcrypt.kdf.HkdfEngine;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
 import java.security.SecureRandom;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -116,5 +113,4 @@ public class BcryptAdvancedTest {
         assertFalse(BcryptEngine.verify(buggyPassword, hash, config),
             "Bcrypt engine is vulnerable to the historical 0x80 bug!");
     }
-
 }

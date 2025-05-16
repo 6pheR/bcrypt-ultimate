@@ -34,7 +34,7 @@ public final class BcryptEngine {
     public static String hash(String password, BcryptConfig config, SecureRandom random) {
         if (config.isStrictFips()) {
             if (config.getKdfEngine() == null) {
-                throw new IllegalStateException("Strict FIPS mode requires a FIPS-compliant KDF (e.g., Argon2).");
+                throw new IllegalStateException("Strict FIPS mode requires a FIPS-compliant KDF (e.g., Argon2, HKDF).");
             }
         }
 
@@ -48,7 +48,7 @@ public final class BcryptEngine {
                 ? kdf.derive(password.toCharArray(), salt, 32)
                 : passwordBytes;
 
-        return BcryptImpl.hash(input, config.getCostFactor(), salt);
+        return BcryptImpl.hash(input, config.getCostFactor(), salt, config.getVersion());
     }
 
     /**
