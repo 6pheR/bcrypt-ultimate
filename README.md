@@ -100,17 +100,6 @@ boolean valid = BcryptEngine.verify("password", hash, config);
 
 ---
 
-## 🔐 Security Features
-
-* Constant-time hash comparison
-* Secure salt generation (via `SecureRandom`)
-* Optional pre-KDF: Argon2 or HKDF
-* Strict FIPS mode: disables Blowfish if no KDF
-* Immutable configs via builder
-* Fully thread-safe implementation
-
----
-
 ## ✅ Test Coverage
 
 ```bash
@@ -153,8 +142,7 @@ src/
 ### ⚠️ Password Length Limitation
 
 Bcrypt limits passwords to 72 bytes. Any characters beyond that are ignored.  
-To avoid unexpected behavior, it's recommended to pre-process passwords using a KDF such as Argon2 or HKDF,  
-or hash the password with SHA-256 before passing it into Bcrypt.
+To avoid unexpected behavior, it's recommended to pre-process passwords using a KDF such as Argon2 or HKDF before passing it into Bcrypt.
 
 ---
 
