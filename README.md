@@ -35,7 +35,7 @@ Its main goals are:
   * Constant-time comparison to prevent timing attacks
   * Cryptographically secure random salts
   * Strict FIPS-compliant mode
-  * Support for Bcrypt versions: $2a$, $2b$, $2y$ (internally treated as $2b$ for compatibility)
+  * Support for Bcrypt versions: $2a$, $2b$, and $2y$ (with $2y$ internally mapped to $2b$ for compatibility with standard implementations)
 
 ---
 
