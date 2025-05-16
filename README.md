@@ -64,8 +64,6 @@ mvn clean install
 
 ## 🔧 CLI Usage
 
-### Hash
-
 ```bash
  -c,--cost <arg>        Cost factor (default: 12)
  -h,--hash              Hash a password
@@ -75,6 +73,8 @@ mvn clean install
  -s,--strict            Enable strict FIPS mode
  -v,--verify            Verify a password
 ```
+
+### Hash
 
 ```bash
 java -jar bcrypt-ultimate.jar --hash --password "myPassword123" --cost 12
