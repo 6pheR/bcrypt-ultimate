@@ -9,6 +9,20 @@
 
 ---
 
+## 🎯 Purpose
+
+This library provides an optional key derivation layer (KDF) on top of `bcrypt`, using algorithms like **Argon2id**, **HKDF**, to enhance password hashing security.
+
+Its main goals are:
+
+- **Bypass bcrypt’s 72-byte password input limit.**
+- **Increase resistance to GPU/ASIC attacks** with memory-hard KDFs.
+- Provide **modularity and flexibility** in how passwords are processed and hashed.
+
+> Note: This library is not intended as a full cryptographic KDF for key material (e.g., AES). Its focus is secure and customizable **password hashing workflows**.
+
+---
+
 ## ✨ Features
 
 * ✅ Pure Java Bcrypt (no native bindings)
