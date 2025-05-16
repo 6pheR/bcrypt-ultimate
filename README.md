@@ -48,13 +48,13 @@ mvn clean install
 ### Hash
 
 ```bash
-java -jar target/bcrypt-ultimate-1.0.0-fat.jar --hash --password "myPassword123" --cost 12
+java -jar bcrypt-ultimate.jar --hash --password "myPassword123" --cost 12
 ```
 
 ### Verify
 
 ```bash
-java -jar target/bcrypt-ultimate-1.0.0-fat.jar --verify --password "myPassword123" --hashvalue "$2b$12$...."
+java -jar bcrypt-ultimate.jar --verify --password "myPassword123" --hashvalue "$2b$12$...."
 ```
 
 ---
