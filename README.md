@@ -1,6 +1,25 @@
 # bcrypt-ultimate
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Java Version](https://img.shields.io/badge/Java-23%2B-blue)](https://www.oracle.com/java/technologies/javase-downloads.html)
+
+---
+
 **bcrypt-ultimate** is a modern and secure Java library for password hashing using the Bcrypt algorithm, with optional pre-KDF support via Argon2 or HKDF.
+
+---
+
+## 🎯 Purpose
+
+This library provides an optional key derivation layer (KDF) on top of `bcrypt`, using algorithms like **Argon2id**, **HKDF**, to enhance password hashing security.
+
+Its main goals are:
+
+- **Bypass bcrypt’s 72-byte password input limit.**
+- **Increase resistance to GPU/ASIC attacks** with memory-hard KDFs.
+- Provide **modularity and flexibility** in how passwords are processed and hashed.
+
+> Note: This library is not intended as a full cryptographic KDF for key material (e.g., AES). Its focus is secure and customizable **password hashing workflows**.
 
 ---
 
@@ -48,13 +67,13 @@ mvn clean install
 ### Hash
 
 ```bash
-java -jar target/bcrypt-ultimate-1.0.0-fat.jar --hash --password "myPassword123" --cost 12
+java -jar bcrypt-ultimate.jar --hash --password "myPassword123" --cost 12
 ```
 
 ### Verify
 
 ```bash
-java -jar target/bcrypt-ultimate-1.0.0-fat.jar --verify --password "myPassword123" --hashvalue "$2b$12$...."
+java -jar bcrypt-ultimate.jar --verify --password "myPassword123" --hashvalue "$2b$12$...."
 ```
 
 ---
@@ -75,10 +94,10 @@ String hash = BcryptEngine.hash("password", BcryptConfig.builder()
 BcryptConfig config = BcryptConfig.builder()
     .setCostFactor(12)
     .withKdf(Argon2KdfEngine.builder()
-        .iterations(3)
-        .memoryKb(65536)
+        .timeCost(3)
+        .memoryCost(65536)
         .parallelism(2)
-        .outputLength(32)
+        .hashLength(32)
         .build())
     .build();
 
@@ -148,13 +167,8 @@ src/
 * Not officially FIPS-certified
 * Bcrypt is CPU-bound, not ideal for large files
 * Use with Argon2 or HKDF for modern systems
-
----
-
-### ⚠️ Password Length Limitation
-
-Bcrypt limits passwords to 72 bytes. Any characters beyond that are ignored.  
-To avoid unexpected behavior, it's recommended to pre-process passwords using a KDF such as Argon2 or HKDF before passing it into Bcrypt.
+* Bcrypt limits passwords to 72 bytes. Any characters beyond that are ignored.  
+To avoid unexpected behavior, it's recommended to pre-process passwords using a KDF such as Argon2 or HKDF.
 
 ---
 
