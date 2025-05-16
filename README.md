@@ -148,13 +148,8 @@ src/
 * Not officially FIPS-certified
 * Bcrypt is CPU-bound, not ideal for large files
 * Use with Argon2 or HKDF for modern systems
-
----
-
-### ⚠️ Password Length Limitation
-
-Bcrypt limits passwords to 72 bytes. Any characters beyond that are ignored.  
-To avoid unexpected behavior, it's recommended to pre-process passwords using a KDF such as Argon2 or HKDF before passing it into Bcrypt.
+* Bcrypt limits passwords to 72 bytes. Any characters beyond that are ignored.  
+To avoid unexpected behavior, it's recommended to pre-process passwords using a KDF such as Argon2 or HKDF.
 
 ---
 
